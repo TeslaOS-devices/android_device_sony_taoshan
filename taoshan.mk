@@ -16,7 +16,6 @@ $(call inherit-product, $(SRC_TARGET_DIR)/product/languages_full.mk)
 $(call inherit-product, $(SRC_TARGET_DIR)/product/full_base_telephony.mk)
 $(call inherit-product, vendor/sony/taoshan/taoshan-vendor.mk)
 $(call inherit-product, device/sony/common/resources.mk)
-$(call inherit-product, device/sony/msm8960-common/msm8960.mk)
 
 $(call inherit-product, frameworks/native/build/phone-xhdpi-1024-dalvik-heap.mk)
 
@@ -43,6 +42,13 @@ PRODUCT_COPY_FILES += \
     frameworks/native/data/etc/android.hardware.nfc.xml:system/etc/permissions/android.hardware.nfc.xml \
     frameworks/native/data/etc/com.android.nfc_extras.xml:system/etc/permissions/com.android.nfc_extras.xml \
     packages/wallpapers/LivePicker/android.software.live_wallpaper.xml:system/etc/permissions/android.software.live_wallpaper.xml
+
+# Media profile
+PRODUCT_COPY_FILES += \
+    frameworks/av/media/libstagefright/data/media_codecs_google_audio.xml:system/etc/media_codecs_google_audio.xml \
+    frameworks/av/media/libstagefright/data/media_codecs_google_telephony.xml:system/etc/media_codecs_google_telephony.xml \
+    frameworks/av/media/libstagefright/data/media_codecs_google_video.xml:system/etc/media_codecs_google_video.xml \
+    $(LOCAL_PATH)/rootdir/system/etc/media_codecs.xml:system/etc/media_codecs.xml
 
 # Platform specific overlays
 DEVICE_PACKAGE_OVERLAYS := device/sony/taoshan/overlay
@@ -100,7 +106,6 @@ PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/rootdir/root/sbin/tad_static:root/sbin/tad_static
 
 PRODUCT_PACKAGES += \
-    charger \
     charger_res_images \
     libnl_2 \
     libtinyxml
@@ -128,6 +133,72 @@ endif
 
 PRODUCT_COPY_FILES += \
     $(NFCEE_ACCESS_PATH):system/etc/nfcee_access.xml
+
+# Display
+PRODUCT_PACKAGES += \
+    libgenlock \
+    libmemalloc \
+    liboverlay \
+    libqdutils \
+    libtilerenderer \
+    libI420colorconvert
+
+# Lights wrapper
+PRODUCT_PACKAGES += \
+    lights.msm8960
+
+# Media
+PRODUCT_PACKAGES += \
+    qcmediaplayer
+
+PRODUCT_BOOT_JARS += \
+    qcmediaplayer
+
+# Omx
+PRODUCT_PACKAGES += \
+    libOmxAacEnc \
+    libOmxAmrEnc \
+    libOmxCore \
+    libOmxEvrcEnc \
+    libOmxQcelp13Enc \
+    libOmxVdec \
+    libOmxVenc \
+    libc2dcolorconvert \
+    libdashplayer \
+    libdivxdrmdecrypt \
+    libmm-omxcore \
+    libstagefrighthw
+
+# Power
+PRODUCT_PACKAGES += \
+    power.qcom
+
+# QCOM
+PRODUCT_PROPERTY_OVERRIDES += \
+    com.qc.hardware=true
+
+# QC Perf
+PRODUCT_PROPERTY_OVERRIDES += \
+    ro.vendor.extension_library=/vendor/lib/libqc-opt.so
+
+# RIL
+PRODUCT_PROPERTY_OVERRIDES += \
+    ro.telephony.ril_class=SonyRIL
+
+# WiFi
+PRODUCT_PROPERTY_OVERRIDES += \
+    wlan.driver.ath=0 \
+    wifi.interface=wlan0 \
+    wifi.supplicant_scan_interval=15
+
+PRODUCT_PACKAGES += \
+    libQWiFiSoftApCfg \
+    libqsap_sdk \
+    libwpa_client \
+    hostapd \
+    dhcpcd.conf \
+    wpa_supplicant \
+    wpa_supplicant.conf
 
 PRODUCT_PACKAGES += \
     alsa.msm8960 \
@@ -163,14 +234,18 @@ PRODUCT_PACKAGES += \
 
 # FM radio
 PRODUCT_PACKAGES += \
-	qcom.fmradio \
-	libqcomfm_jni \
-	FM2 \
-	FMRecord
+    qcom.fmradio \
+    libqcomfm_jni \
+    FM2 \
+    FMRecord
 
 # GPS-1
 PRODUCT_PACKAGES += \
     gps.msm8960
+
+# Recovery
+PRODUCT_PACKAGES += \
+    keycheck
 
 PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/gps/gps.conf:system/etc/gps.conf \
@@ -185,8 +260,7 @@ PRODUCT_PROPERTY_OVERRIDES += \
     ril.subscription.types=NV,RUIM \
     telephony.lteOnCdmaDevice=0 \
     ro.use_data_netmgrd=true \
-    ro.telephony.call_ring.multiple=false \
-    ro.ril.telephony.mqanelements=6
+    ro.telephony.call_ring.multiple=false
 
 PRODUCT_PROPERTY_OVERRIDES += \
     ro.qualcomm.cabl=0 \
@@ -198,9 +272,9 @@ PRODUCT_PROPERTY_OVERRIDES += \
 
 PRODUCT_PROPERTY_OVERRIDES += \
     qcom.audio.init=complete \
-    persist.audio.fluence.mode=endfire \
+    persist.audio.fluence.mode=false \
     persist.audio.vr.enable=false \
-    persist.audio.handset.mic=digital \
+    persist.audio.handset.mic=analog \
     persist.audio.lowlatency.rec=false \
     media.aac_51_output_enabled=true \
     ro.qc.sdk.audio.ssr=false \
@@ -209,6 +283,9 @@ PRODUCT_PROPERTY_OVERRIDES += \
 
 PRODUCT_DEFAULT_PROPERTY_OVERRIDES += \
     camera2.portability.force_api=1
+
+PRODUCT_PROPERTY_OVERRIDES += \
+    persist.hwc.mdpcomp.enable=true
 
 # GPS-2
 PRODUCT_PROPERTY_OVERRIDES += \
