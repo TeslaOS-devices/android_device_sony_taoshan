@@ -13,10 +13,7 @@
 # limitations under the License.
 
 $(call inherit-product, $(SRC_TARGET_DIR)/product/languages_full.mk)
-$(call inherit-product, $(SRC_TARGET_DIR)/product/full_base_telephony.mk)
 $(call inherit-product, vendor/sony/taoshan/taoshan-vendor.mk)
-$(call inherit-product, device/sony/common/resources.mk)
-
 $(call inherit-product, frameworks/native/build/phone-xhdpi-1024-dalvik-heap.mk)
 
 # OpenGL ES 3.0
@@ -58,6 +55,7 @@ PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/rootdir/root/fstab.qcom:root/fstab.qcom \
     $(LOCAL_PATH)/rootdir/root/ueventd.qcom.rc:root/ueventd.qcom.rc \
     $(LOCAL_PATH)/rootdir/root/init.qcom.usb.rc:root/init.qcom.usb.rc \
+    $(LOCAL_PATH)/rootdir/root/init.qcom.power.rc:root/init.qcom.power.rc \
     $(LOCAL_PATH)/rootdir/root/init.recovery.qcom.rc:root/init.recovery.qcom.rc
 
 # QCOM init scripts
@@ -190,6 +188,10 @@ PRODUCT_PROPERTY_OVERRIDES += \
     wlan.driver.ath=0 \
     wifi.interface=wlan0 \
     wifi.supplicant_scan_interval=15
+
+# I/O Scheduler
+PRODUCT_PROPERTY_OVERRIDES += \
+    sys.io.scheduler=bfq
 
 PRODUCT_PACKAGES += \
     libQWiFiSoftApCfg \
